@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+
+ ─╔═╗╔═╗─╔══╗─╔╗────╔═══╗─╔═══╗──╔╗─╔╗─╔═══╗────╔══╗─╔═══╗
+ ─║║╚╝║║─╚╣╠╝─║║────║╔══╝─║╔═╗║──║║─║║─║╔══╝────╚╣╠╝─║╔═╗║
+ ─║╔╗╔╗║──║║──║║────║╚══╗─║║─║║──║║─║║─║╚══╗─────║║──║║─║║
+ ─║║║║║║──║║──║║─╔╗─║╔══╝─║║─║║──║║─║║─║╔══╝─────║║──║║─║║
+ ─║║║║║║─╔╣╠╗─║╚═╝║─║╚══╗─║╚═╝╠╗─║╚═╝║─║╚══╗─╔╗─╔╣╠╗─║╚═╝║
+ ─╚╝╚╝╚╝─╚══╝─╚═══╝─╚═══╝─╚════╝─╚═══╝─╚═══╝─╚╝─╚══╝─╚═══╝
+ Created by: Tio milequezin - 2024
+
+-->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="mileque.io Uploads - Image Publishing"/>
+  <meta name="og:description" content="mileque.io Uploads - Image Publishing"/>
+  <meta name="og:url" content=""/>
+  <meta name="og:title" content="mileque.io"/>
+  <meta name="og:image" content="https://telegra.ph/file/582cb13de06fb3c536dcd.jpg">
+  <meta property="og:image" content="https://telegra.ph/file/582cb13de06fb3c536dcd.jpg" />
+  <meta property="og:image:secure_url" content="https://telegra.ph/file/582cb13de06fb3c536dcd.jpg" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="400" />
+  <meta property="og:image:height" content="300" />
+  <meta property="og:image:alt" content="não mano, não" />
+  <link rel="stylesheet" href="style.css">
+  <title>mileque.io</title>
+  <style>
+  </style>
+</head>
+<body>
+  <script>
+    console.log('https://404/deu/erro/mano;-;');
+  </script>
+  <form id="uploadForm">
+    <label for="folderName"></label>
+    <div class="filesr">
+          <input type="text" id="folderName" class="namepas" placeholder="Title" onfocus="this.placeholder=''" onblur="this.placeholder='Title'"  name="folderName" required>
+    </div>
+<div class="select">
+        <label for="uploadImage" class="upload-image">
+          <h4>Select an image :</h4>
+            <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><rect x="48" y="80" width="416" height="352" rx="48" ry="48" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32"/><circle cx="336" cy="176" r="32" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/><path d="M304 335.79l-90.66-90.49a32 32 0 00-43.87-1.3L48 352M224 432l123.34-123.34a32 32 0 0143.11-2L464 368" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/></svg>
+          <!--img src="path/to/your/upload-button-image.png" alt="Upload de Imagem"-->
+        </label>
+    <input type="file" id="image" name="image" accept="image/*" required>
+  <img id="preview" src="" alt="Pré-visualização da Imagem" style="display: none;">
+  <br>
+  <br>
+    </div>
+
+  </form>
+    <div class="ggbuton">
+      <button type="submit" id="saveButton" disabled class="btn">Save Image</button>
+  </div>
+
+    <script>
+      document.querySelector('.namepas').addEventListener('input', function() {
+    const input = document.querySelector('.namepas');
+    const button = document.querySelector('.btn');
+    if (input.value.trim() !== '') {
+        button.disabled = false;
+    } else {
+        button.disabled = true;
+    }
+});
+    </script>
+
+  <script>
+  document.querySelector('.upload-image').addEventListener('click', function() {
+      document.getElementById('image').click();
+    });
+
+    document.getElementById('image').addEventListener('change', function() {
+
+      const fileInput = document.getElementById('image');
+      const preview = document.getElementById('preview');
+      const bnt = document.getElementById('saveButton');
+      const selectfiles = document.querySelector('.upload-image');
+      if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          preview.src = e.target.result;
+          preview.style.display = 'block';
+          bnt.style.display = 'block';
+          selectfiles.style.display = 'none'
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+      }
+    });
+
+    document.getElementById('saveButton').addEventListener('click', async (e) => {
+      e.preventDefault(); // Impedir o comportamento padrão do formulário
+      const folderName = document.getElementById('folderName').value;
+      const formData = new FormData(document.getElementById('uploadForm'));
+      try {
+        const response = await fetch('/uploads', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) {
+          throw new Error('Erro ao fazer o upload da imagem');
+        }
+
+        const htmlUrl = `../uploads/${folderName}/index.html`;
+        console.log('URL do HTML:', htmlUrl);
+        window.location.href = htmlUrl;
+
+        const result = await response.json();
+        console.log('Resultado do Upload:', result);
+      } catch (error) {
+        console.error('Erro:', error.message);
+      }
+    });
+  </script>
+</body>
+</html>

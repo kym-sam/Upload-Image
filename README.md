@@ -1,5 +1,5 @@
 <h1>Hello👋</h1>
-    <img src="https://mileque.onrender.com/uploads/milequezin/image-1716577595370-87963966.webp">
+    <img src="">
   
 ## mileque.io 
 ### Uploads - Image Publishing

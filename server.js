@@ -79,9 +79,9 @@ app.post('/uploads', upload.single('image'), (req, res) => {
       <meta name="og:description" content="mileque.io Uploads - Image Publishing"/>
       <meta name="og:url" content=""/>
       <meta name="og:title" content="${folderName}"/>
-      <meta name="og:image" content="./${imagePath}">
-      <meta property="og:image" content="./${imagePath}" />
-      <meta property="og:image:secure_url" content="./${imagePath}" />
+      <meta name="og:image" content="https://mileque.onrender.com/uploads/${folderName}/${imagePath}">
+      <meta property="og:image" content="https://mileque.onrender.com/uploads/${folderName}/${imagePath}" />
+      <meta property="og:image:secure_url" content="https://mileque.onrender.com/uploads/${folderName}/${imagePath}" />
       <meta property="og:image:type" content="image/jpeg" />
       <meta property="og:image:width" content="400" />
       <meta property="og:image:height" content="300" />

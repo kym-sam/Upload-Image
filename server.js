@@ -50,7 +50,7 @@ app.get('/uploads/:folderName/:dateFolder/:imageName', (req, res) => {
 });
 
 
-app.get('/user/:folderName/:dateFolder', (req, res) => {
+app.get('/uploads/:folderName/:dateFolder', (req, res) => {
   const { folderName, dateFolder } = req.params;
   const htmlFilePath = path.join(__dirname, 'uploads', folderName, dateFolder, 'index.html');
   res.sendFile(htmlFilePath);
@@ -235,7 +235,7 @@ app.post('/uploads', upload.single('image'), (req, res) => {
       res.status(500).send('Erro ao criar o arquivo HTML');
     } else {
       console.log('Arquivo HTML criado com sucesso:', htmlFilePath);
-      res.send('Imagem salva com sucesso! <a href="/user/' + folderName + '/' + dateFolder + '">Ver Imagem</a>');
+      res.send('Imagem salva com sucesso! <a href="/uoloads/' + folderName + '/' + dateFolder + '">Ver Imagem</a>');
     }
   });
 });

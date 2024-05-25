@@ -10,8 +10,8 @@ const PORT = 3000;
 const getFormattedDate = () => {
   const date = new Date();
   const month = date.toLocaleString('en-US', { month: 'long' });
-  const hour = String(date.getHours()).padStart(2, '0');
-  return `${month}-${hour}`;
+  const moo = 'yy'
+  return `${month}-${moo}`;
 };
 
 

@@ -235,7 +235,7 @@ app.post('/uploads', upload.single('image'), (req, res) => {
       res.status(500).send('Erro ao criar o arquivo HTML');
     } else {
       console.log('Arquivo HTML criado com sucesso:', htmlFilePath);
-      res.send('Imagem salva com sucesso! <a href="/uoloads/' + folderName + '/' + dateFolder + '">Ver Imagem</a>');
+      res.send('Imagem salva com sucesso! <a href="/uploads/' + folderName + '/' + dateFolder + '">Ver Imagem</a>');
     }
   });
 });

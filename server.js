@@ -6,11 +6,21 @@ const multer = require('multer');
 const app = express();
 const PORT = 3000;
 
-// Configuração do Multer para o upload de arquivos
+
+const getFormattedDate = () => {
+  const date = new Date();
+  const month = date.toLocaleString('en-US', { month: 'long' });
+  const hour = String(date.getHours()).padStart(2, '0');
+  return `${month}-${hour}`;
+};
+
+
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const folderName = req.body.folderName;
-    const uploadPath = path.join(__dirname, 'uploads', folderName);
+    const dateFolder = getFormattedDate();
+    const uploadPath = path.join(__dirname, 'uploads', folderName, dateFolder);
     fs.mkdir(uploadPath, { recursive: true }, (err) => {
       if (err) {
         console.error('Erro ao criar a pasta:', err);
@@ -29,48 +39,45 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// Servir arquivos estáticos da pasta "public"
+
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Rota para servir imagens da pasta "uploads"
-app.get('/uploads/:folderName/:imageName', (req, res) => {
-  const folderName = req.params.folderName;
-  const imageName = req.params.imageName;
-  const imagePath = path.join(__dirname, 'uploads', folderName, imageName);
+
+app.get('/uploads/:folderName/:dateFolder/:imageName', (req, res) => {
+  const { folderName, dateFolder, imageName } = req.params;
+  const imagePath = path.join(__dirname, 'uploads', folderName, dateFolder, imageName);
   res.sendFile(imagePath);
 });
 
-// Rota para servir o arquivo HTML criado
-app.get('/user/:folderName', (req, res) => {
-  const folderName = req.params.folderName;
-  const htmlFilePath = path.join(__dirname, 'uploads', folderName, 'index.html');
+
+app.get('/user/:folderName/:dateFolder', (req, res) => {
+  const { folderName, dateFolder } = req.params;
+  const htmlFilePath = path.join(__dirname, 'uploads', folderName, dateFolder, 'index.html');
   res.sendFile(htmlFilePath);
 });
 
-// Rota para o formulário de upload de imagem
+
 app.post('/uploads', upload.single('image'), (req, res) => {
   const folderName = req.body.folderName;
   if (!folderName) {
     return res.status(400).send('O nome da pasta é obrigatório');
   }
 
+  const dateFolder = getFormattedDate();
   const imageName = req.file.filename;
-  const imagePath = `${imageName}`
-  //const imagePath = `/${folderName}/${imageName}`;
+  const imagePath = imageName;
 
-  // Gerar o conteúdo HTML
+
   const htmlContent = `
     <!DOCTYPE html>
     <html lang="en">
     <!--
-
     ─╔══╗─╔═╗╔═╗─╔═══╗─╔═══╗─╔═══╗
     ─╚╣╠╝─║║╚╝║║─║╔═╗║─║╔═╗║─║╔══╝
     ──║║──║╔╗╔╗║─║║─║║─║║─╚╝─║╚══╗
     ──║║──║║║║║║─║╚═╝║─║║╔═╗─║╔══╝
     ─╔╣╠╗─║║║║║║─║╔═╗║─║╚╩═║─║╚══╗
     ─╚══╝─╚╝╚╝╚╝─╚╝─╚╝─╚═══╝─╚═══╝
-
     -->
     <head>
       <meta charset="UTF-8">
@@ -79,9 +86,9 @@ app.post('/uploads', upload.single('image'), (req, res) => {
       <meta name="og:description" content="mileque.io Uploads - Image Publishing"/>
       <meta name="og:url" content="https://mileque.onrender.com"/>
       <meta name="og:title" content="${folderName}"/>
-      <meta name="og:image" content="https://mileque.onrender.com/uploads/${folderName}/${imagePath}">
-      <meta property="og:image" content="https://mileque.onrender.com/uploads/${folderName}/${imagePath}" />
-      <meta property="og:image:secure_url" content="https://mileque.onrender.com/uploads/${folderName}/${imagePath}" />
+      <meta name="og:image" content="https://mileque.onrender.com/uploads/${folderName}/${dateFolder}/${imagePath}">
+      <meta property="og:image" content="https://mileque.onrender.com/uploads/${folderName}/${dateFolder}/${imagePath}" />
+      <meta property="og:image:secure_url" content="https://mileque.onrender.com/uploads/${folderName}/${dateFolder}/${imagePath}" />
       <meta property="og:image:type" content="image/jpeg" />
       <meta property="og:image:width" content="400" />
       <meta property="og:image:height" content="300" />
@@ -164,21 +171,71 @@ app.post('/uploads', upload.single('image'), (req, res) => {
           setInterval(updateDateTime, 1000);
           updateDateTime();
       </script>
+      <br>
+      <br>
+      <button class="copy" onclick="copyText()">Copy URL</button>
+      <style>
+        .copy{
+          background-color: #ffffff;
+          color: #000000;
+          font-size: 20px;
+          border-radius: 50px;
+          width: 450px;
+          padding: 10px 40px;
+          border: none;
+          transition: 0.5s;
+          cursor: pointer;
+          margin: 0 auto 10px;
+          font-family:var(--font);
+          font-weight:600;
+        }
+        .copy:hover{
+          background-color: #aaaaaa;
+          transition: 0.5s;
+        }
+    
+        @media(max-width:999px){
+        .copy{
+          width: 80%;
+          margin: 0 auto 10px;
+        }
+        }
+      </style>
+
+      <script>
+      function copyText() {
+      var textToCopy = "https://mileque.onrender.com/uploads/${folderName}/${dateFolder}/${imagePath}";
+      navigator.clipboard.writeText(textToCopy)
+        .then(function() {
+          const copy = document.querySelector('.copy');
+          copy.innerText = "Copied!";
+          copy.classList.add("coped", "centered");
+          copy.classList.add("coped");
+      
+        })
+        .catch(function() {
+          copy.innerText = "Erro.";
+          copy.classList.add("coped", "centered");
+          copy.classList.add("coped");
+      
+        });
+      }
+      </script>
     </body>
     </html>
   `;
 
-  // Caminho para o arquivo HTML
-  const htmlFilePath = path.join(__dirname, 'uploads', folderName, 'index.html');
 
-  // Gravar o conteúdo HTML no arquivo
+  const htmlFilePath = path.join(__dirname, 'uploads', folderName, dateFolder, 'index.html');
+
+
   fs.writeFile(htmlFilePath, htmlContent, (err) => {
     if (err) {
       console.error('Erro ao criar o arquivo HTML:', err);
       res.status(500).send('Erro ao criar o arquivo HTML');
     } else {
       console.log('Arquivo HTML criado com sucesso:', htmlFilePath);
-      res.send('Imagem salva com sucesso! <a href="/uploads/' + folderName + '">Ver Imagem</a>');
+      res.send('Imagem salva com sucesso! <a href="/user/' + folderName + '/' + dateFolder + '">Ver Imagem</a>');
     }
   });
 });

@@ -4,4 +4,3 @@
 ## mileque.io 
 ### Uploads - Image Publishing
 
-### <a href="https://mileque.onrender.com/">Server - mileque.io</a>
